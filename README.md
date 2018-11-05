@@ -149,7 +149,7 @@ vrrp_instance VI_1 {
 # sudo systemctl start keepalived
 ```
 ## Cheeses Application
-The Cheeses application is used in a [Traefik Kubernetes demos](https://docs.traefik.io/user-guide/kubernetes/) and it demonstrates some Ingress use-cases for a microservices type of application. Below yaml-files are adjusted to our Vagrant Kubernetes cluster, basically what is changed are the hostnames in the cheese-ingress.yaml file. If you run the configuration in a different network, please change the hostnames/domain in this file.
+The Cheeses application is used in a [Traefik Kubernetes demos](https://docs.traefik.io/user-guide/kubernetes/) and it demonstrates some Ingress use-cases for a microservices type of application. Below yaml-files are adjusted to our Vagrant Kubernetes cluster, basically what is changed are the hostnames in the [cheese-ingress.yaml](https://github.com/jromers/poc-cheeses/blob/master/cheese-ingress.yaml) file. If you run the configuration in a different network, please change the hostnames/domain in this file.
 Download the files, explore the code and apply them in the cluster:
 ```
 # wget https://raw.githubusercontent.com/jromers/poc-cheeses/master/cheese-deployments.yaml
