@@ -5,7 +5,7 @@ In this how-to guide I’ll describe the configuration steps to setup an Ingress
 Ingress is a technology in Kubernetes to allow inbound network connections to reach application containers running in the pods in the cluster (which by default have IP addresses only routable in the cluster).
 
 I use the following software:
-* [Oracle Linux Vagrant Boxes to build VirtualBox VMs](https://blogs.oracle.com/developers/announcing-the-oracle-vagrant-boxes-github-repository) for a 3-node Kubernetes cluster
+* [Oracle Linux Vagrant Boxes to build VirtualBox VMs](https://github.com/oracle/vagrant-boxes) for a 3-node Kubernetes cluster
 * Nginx Ingress controller to manage Ingress traffic to the containerized applications
 * Haproxy and Keepalived as software load balancer on the Oracle Linux Kubernetes worker nodes
 * The Cheeses application with three microservices (3 types of cheese) that is used to test the deployment
