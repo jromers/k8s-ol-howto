@@ -13,7 +13,7 @@ I use the following software:
 ## Prerequisites
 
 I run this deployment on a laptop using Vagrant and VirtualBox. I follow the standard installation as published on the Oracle Community website: [Use Vagrant and VirtualBox to setup Oracle Container Services for use with Kubernetes](https://community.oracle.com/docs/DOC-1022800). 
-
+![Architecture diagran for laptop setup](diagram.png)
 This how-to will run on every developer platform (Windows, MacOS or Linux). But do not hesitate to use this how-to on any virtualization platform (Oracle Linux VMs based on KVM or VMware) or on bare-metal Oracle Linux servers in your datacenter network.
 
 In this deployment I use the standard IP addresses from the Vagrantfile, I only add one IP-addresses to be used as Virtual IP for the load balancer with additional hostnames for the microservices. I add these addresses to my local hosts file on the laptop.
