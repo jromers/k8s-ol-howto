@@ -12,7 +12,7 @@ I use the following software:
 
 ## Prerequisites
 
-I run this deployment on a laptop using Vagrant and VirtualBox. I follow the standard installation as published on the Oracle Community website: [Use Vagrant and VirtualBox to setup Oracle Container Services for use with Kubernetes] (https://community.oracle.com/docs/DOC-1022800). 
+I run this deployment on a laptop using Vagrant and VirtualBox. I follow the standard installation as published on the Oracle Community website: [Use Vagrant and VirtualBox to setup Oracle Container Services for use with Kubernetes](https://community.oracle.com/docs/DOC-1022800). 
 
 This how-to will run on every developer platform (Windows, MacOS or Linux). But do not hesitate to use this how-to on any virtualization platform (Oracle Linux VMs based on KVM or VMware) or on bare-metal Oracle Linux servers in your datacenter network.
 
@@ -25,7 +25,7 @@ In this deployment I use the standard IP addresses from the Vagrantfile, I only 
 ```
 
 ## Ingress Controller and Load balancer
-Ingress is a resource in the Kubernetes cluster for access to the services in the cluster, typically based on the HTTP protocol.  The functionality is controlled by an Ingress controller and there are several controller implementations. In this how-to I use the [nginx-ingress controller] (https://kubernetes.github.io/ingress-nginx/).
+Ingress is a resource in the Kubernetes cluster for access to the services in the cluster, typically based on the HTTP protocol.  The functionality is controlled by an Ingress controller and there are several controller implementations. In this how-to I use the [nginx-ingress controller](https://kubernetes.github.io/ingress-nginx/).
 
 Depending on the deployment type (AWS, GCE, OKE or bare-metal) there is communication between Ingress and load balancers. In this how-to I use the bare-metal deployment type and place haproxy and keepalived in front of the Ingress controller to forward all incoming traffic to the Ingress controller.
 
