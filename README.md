@@ -94,3 +94,105 @@ Worker1: 	192.168.99.101
 Worker2: 	192.168.99.102
 Virtual IP: 	192.168.99.110
 ```
+Login to worker1 (vagrant ssh worker1) and install keepalived and replace the configuration file with the one below:
+```
+# sudo yum install -y keepalived
+# sudo vi /etc/keepalived/keepalived.conf
+
+vrrp_script chk_haproxy {
+        script "killall -0 haproxy"
+        interval 2
+        weight 2
+}
+  
+vrrp_instance VI_1 {
+        interface eth0
+        state MASTER
+        virtual_router_id 51
+        priority 101              # 101 on master, 100 on backup
+        virtual_ipaddress {
+            192.168.99.110        # the virtual IP
+        }
+        track_script {
+            chk_haproxy
+        }
+}
+
+# sudo systemctl enable keepalived
+# sudo systemctl start keepalived
+```
+Login to worker2 (vagrant ssh worker2) install keepalived and replace the configuration file with the one below:
+```
+# sudo yum install -y keepalived
+# sudo vi /etc/keepalived/keepalived.conf
+
+vrrp_script chk_haproxy {
+        script "killall -0 haproxy"
+        interval 2
+        weight 2
+}
+  
+vrrp_instance VI_1 {
+        interface eth0
+        state MASTER
+        virtual_router_id 51
+        priority 100                    # 101 on master, 100 on backup
+        virtual_ipaddress {
+	   192.168.99.110        # the virtual IP
+        }
+        track_script {
+            chk_haproxy
+        }
+}
+
+# sudo systemctl enable keepalived
+# sudo systemctl start keepalived
+```
+## Cheeses Application
+The Cheeses application is used in [Kubernetes demos](https://docs.traefik.io/user-guide/kubernetes/) on the Internet and it demonstrates some Ingress use-cases for a microservices type of application. Below yaml-files are adjusted to our Vagrant Kubernetes cluster, basically what is changed are the hostnames in the cheese-ingress.yaml file. If you run the configuration in a different network, please change the hostnames/domain in this file.
+Download the files, explore the code and apply them in the cluster:
+```
+# wget https://raw.githubusercontent.com/jromers/poc-cheeses/master/cheese-deployments.yaml
+# wget https://raw.githubusercontent.com/jromers/poc-cheeses/master/cheese-services.yaml
+# more *.yaml
+# kubectl apply -f cheese-deployments.yaml
+# kubectl apply -f cheese-services.yaml
+```
+### Routing based on host names (HTTP Host header)
+The three microservices are represented by three domain names, they all point to a single Virtual IP address. The Ingress controller routes the incoming HTTP request based on the used domain name to the related microservice running in a pod.
+```
+# wget https://raw.githubusercontent.com/jromers/poc-cheeses/master/cheese-ingress.yaml
+# more cheese-ingress.yaml
+# kubectl apply -f cheese-ingress.yaml
+```
+Verify the installation:
+```
+# kubectl get pods
+# kubectl get services
+# kubectl get ingress
+```
+Test the Cheeses application with curl or point the browser to the URLs:
+```
+# curl -v -H 'Host: stilton.vagrant.vm' http://stilton.vagrant.vm/
+# curl -v -H 'Host: cheddar.vagrant.vm' http://192.168.99.110/
+
+[http://stilton.vagrant.vm/](http://stilton.vagrant.v)
+[http://cheddar.vagrant.vm/](http://cheddar.vagrant.vm)
+[http://wensleydale.vagrant.vm/](http://wensleydale.vagrant.vm)
+```
+### Routing based on url path
+In this case the Ingress is reconfigured to host the three microservices under one domain and based on the URL path routed to the related microservice running in a pod. Note the annotation “ingress.kubernetes.io/rewrite-target: /“ in the yaml file, which takes care of rewrite the path from e.g. “/stilton” to “/“ before sending to the target backend (because that’s what it is expecting).
+```
+# wget https://raw.githubusercontent.com/jromers/poc-cheeses/master/cheeses-ingress.yaml
+# more cheeses-ingress.yaml
+# kubectl apply -f cheeses-ingress.yaml
+# kubectl get ingress
+```
+Test the Cheeses application with curl or point the browser to the URLs:
+```
+# curl -v -H 'Host: cheeses.vagrant.vm' http://cheeses.vagrant.vm/stilton
+
+[http://cheeses.vagrant.vm/stilton/](http://cheeses.vagrant.vm/stilton/)
+[http://cheeses.vagrant.vm/cheddar/](http://cheeses.vagrant.vm/cheddar/)
+[http://cheeses.vagrant.vm/wensleydale/](http://cheeses.vagrant.vm/wensleydale/)
+```
