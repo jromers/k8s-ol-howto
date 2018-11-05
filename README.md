@@ -8,7 +8,7 @@ I use the following software:
 * [Oracle Linux Vagrant Boxes to build VirtualBox VMs](https://github.com/oracle/vagrant-boxes) for a 3-node Kubernetes cluster
 * Nginx Ingress controller to manage Ingress traffic to the containerized applications
 * Haproxy and Keepalived as software load balancer on the Oracle Linux Kubernetes worker nodes
-* The [Cheeses application](https://docs.traefik.io/user-guide/kubernetes/) with three microservices (3 types of cheese) that is used to test the deployment
+* The [Cheeses application](https://docs.traefik.io/user-guide/kubernetes/) with three microservices (3 types of cheese) that is used to test the deployment (I use nginx-ingress in stead of Traefik).
 
 ## Prerequisites
 
