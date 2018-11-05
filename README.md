@@ -149,7 +149,7 @@ vrrp_instance VI_1 {
 # sudo systemctl start keepalived
 ```
 ## Cheeses Application
-The Cheeses application is used in [Kubernetes demos](https://docs.traefik.io/user-guide/kubernetes/) on the Internet and it demonstrates some Ingress use-cases for a microservices type of application. Below yaml-files are adjusted to our Vagrant Kubernetes cluster, basically what is changed are the hostnames in the cheese-ingress.yaml file. If you run the configuration in a different network, please change the hostnames/domain in this file.
+The Cheeses application is used in a [Traefik Kubernetes demos](https://docs.traefik.io/user-guide/kubernetes/) and it demonstrates some Ingress use-cases for a microservices type of application. Below yaml-files are adjusted to our Vagrant Kubernetes cluster, basically what is changed are the hostnames in the cheese-ingress.yaml file. If you run the configuration in a different network, please change the hostnames/domain in this file.
 Download the files, explore the code and apply them in the cluster:
 ```
 # wget https://raw.githubusercontent.com/jromers/poc-cheeses/master/cheese-deployments.yaml
@@ -175,11 +175,10 @@ Test the Cheeses application with curl or point the browser to the URLs:
 ```
 # curl -v -H 'Host: stilton.vagrant.vm' http://stilton.vagrant.vm/
 # curl -v -H 'Host: cheddar.vagrant.vm' http://192.168.99.110/
-
+```
 [http://stilton.vagrant.vm/](http://stilton.vagrant.v)
 [http://cheddar.vagrant.vm/](http://cheddar.vagrant.vm)
 [http://wensleydale.vagrant.vm/](http://wensleydale.vagrant.vm)
-```
 ### Routing based on url path
 In this case the Ingress is reconfigured to host the three microservices under one domain and based on the URL path routed to the related microservice running in a pod. Note the annotation “ingress.kubernetes.io/rewrite-target: /“ in the yaml file, which takes care of rewrite the path from e.g. “/stilton” to “/“ before sending to the target backend (because that’s what it is expecting).
 ```
@@ -191,8 +190,8 @@ In this case the Ingress is reconfigured to host the three microservices under o
 Test the Cheeses application with curl or point the browser to the URLs:
 ```
 # curl -v -H 'Host: cheeses.vagrant.vm' http://cheeses.vagrant.vm/stilton
-
+```
 [http://cheeses.vagrant.vm/stilton/](http://cheeses.vagrant.vm/stilton/)
 [http://cheeses.vagrant.vm/cheddar/](http://cheeses.vagrant.vm/cheddar/)
 [http://cheeses.vagrant.vm/wensleydale/](http://cheeses.vagrant.vm/wensleydale/)
-```
+
