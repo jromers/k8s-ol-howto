@@ -53,3 +53,44 @@ Check the HTTP and HTTPS NodePorts of the Ingress controller, they will be used 
 # kubectl get services -n ingress-nginx
 …….80:XXXXX/TCP,443:YYYYY/TCP……
 ```
+
+### Haproxy 
+
+Login on the worker nodes (vagrant ssh worker1 or vagrant ssh worker2) and install haproxy on each node. After installation, change the standard haproxy configuration file on each node. Remove the example configuration in the second part of the file (after the line that starts with “main frontend which proxys to the backends”) and replace with below configuration. Replace the XXXXX and YYYYY with the NodePort numbers found in the previous section.
+```
+# sudo yum -y install haproxy
+# sudo vi /etc/haproxy/haproxy.cfg 
+
+#<skipped first part of configuration file>
+
+#---------------------------------------------------------------------
+# main frontend which proxys to the backends
+#---------------------------------------------------------------------
+frontend http_front
+    mode tcp
+    bind *:80
+    default_backend http_back
+frontend https_front
+    mode tcp
+    bind *:443
+    default_backend https_back
+backend http_back
+    mode tcp
+    server worker1 192.168.99.101:XXXXX 
+    server worker2 192.168.99.102:XXXXX
+backend https_back
+    mode tcp
+    server worker1 192.168.99.101:YYYYY 
+    server worker2 192.168.99.102:YYYYY
+
+# sudo systemctl enable haproxy
+# sudo systemctl start haproxy
+```
+
+### Keepalive configuration
+As described earlier, we use the following IP addresses in our standard laptop deployment: 
+```
+Worker1: 	192.168.99.101
+Worker2: 	192.168.99.102
+Virtual IP: 	192.168.99.110
+```
