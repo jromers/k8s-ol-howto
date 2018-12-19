@@ -1,4 +1,4 @@
-# How-to: Using Ingress and Load balancer with Oracle Linux and Kubernetes
+# How-to: Install Ingress and Load balancer for on-premise Oracle Linux and Kubernetes
 
 In this how-to guide I’ll describe the configuration steps to setup an Ingress controller and software load balancer for a Kubernetes cluster. This configuration can be used in Kubernetes demos or even in small proof of concept installations where you do not have a load balancer provided by a cloud service provider.
 

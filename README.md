@@ -3,7 +3,8 @@
 In the How-to guides I describe the configuration steps to use cloud-native software in an Oracle Linux on-premise deployment. Most of the information is a result of work I did with customers or material I used for workshops or hands-on labs.
 
 This will be a growing list with How-to guides organized in sub-projects, for now the following guides are available:
-* [Using Ingress and Load balancer with Oracle Linux and Kubernetes](https://github.com/jromers/k8s-ol-howto/tree/master/ingress_loadbalancer)
+* [Install Ingress and Load balancer for on-premise Oracle Linux and Kubernetes](https://github.com/jromers/k8s-ol-howto/tree/master/ingress_loadbalancer)
+* [Install Prometheus & Grafana with Helm and NFS store for on-premise Oracle Linux and Kubernetes](https://github.com/jromers/k8s-ol-howto/tree/master/prometheus-nfs)
 
 The How-to guides are simple to use and designed to run on a laptop. This is a very conveniant setup and a nice way to explore or develop cloud native applications without spending cloud resources. Another advantage for this setup is that you build an infrastructure on your laptop that is similar to your production environment including clustered nodes.
 

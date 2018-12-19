@@ -1,4 +1,4 @@
-# How-to: Install Prometheus & Grafana with Helm and NFS store
+# How-to: Install Prometheus & Grafana with Helm and NFS store for on-premise Oracle Linux and Kubernetes
 
 In this how-to guide I’ll describe the configuration steps to setup Prometheus and Grafana on an Oracle Linux on-premise Kubernetes cluster. I use this configuration in Kubernetes demos, workshops or even in small proof of concept installations where you want to have a quick installation experience.
 
