@@ -1,12 +1,12 @@
 # How-to: Install Prometheus & Grafana with Helm and NFS store
 
-In this how-to guide I’ll describe the configuration steps to setup prometheus and Grafana to monitor the Kubernetes cluster. This configuration can be used in Kubernetes demos or even in small proof of concept installations where you want to have a quick installation experience.
+In this how-to guide I’ll describe the configuration steps to setup Prometheus and Grafana to monitor the Kubernetes cluster. This configuration can be used in Kubernetes demos or even in small proof of concept installations where you want to have a quick installation experience.
 
 I use the following software:
 * [Oracle Linux Vagrant Boxes to build VirtualBox VMs](https://github.com/oracle/vagrant-boxes) for a 3-node Kubernetes cluster
-* Helm to install Kubernetes applications
-* NFS client provisioner using an external NFS server
-* Prometheus operator for Kubernetes
+* [Helm](https://docs.helm.sh/) to install Kubernetes applications
+* [NFS Client Provisioner}(https://github.com/helm/charts/tree/master/stable/nfs-client-provisioner) using an external NFS server
+* [Prometheus Operator](https://github.com/coreos/prometheus-operator) for Kubernetes
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ I run this deployment on a laptop using Vagrant and VirtualBox. I follow the sta
 
 ## Install Helm
 
-Helm is a tool for managing Kubernetes charts. Charts are packages of pre-configured Kubernetes resources. In this How-to guide I use the Helm Charts for the [NFS Client Provisioner](https://github.com/helm/charts/tree/master/stable/nfs-client-provisioner) and the [Prometheus Operator](https://github.com/coreos/prometheus-operator).
+Helm is a tool for managing Kubernetes charts. Charts are packages of pre-configured Kubernetes resources. In this How-to guide I use the [Helm Charts](https://github.com/helm/charts/tree/master/stable) for the NFS Client Provisioner and the Prometheus Operator.
 
 Install Helm on MacOSX with the [Homebrew](https://brew.sh/) package manager:
 ```
@@ -43,9 +43,9 @@ First, on each Oracle Linux worker node, install the NFS packages:
 ```
 # yum install -y nfs-utils
 ```
-The Helm NFS Provisioner chart requires some configuration settings so that your Kubernetes server knows how to find your external NFS server and mountpath. For this I use a customized values.yaml file to overwrite the default settings. You may download the example file and provide the NFS server IP-address and mountpath:
+The Helm NFS Provisioner chart requires some configuration settings so that your Kubernetes server knows how to find your external NFS server and mountpath. For this I use a customized [values.yaml file](https://github.com/jromers/k8s-ol-howto/blob/master/prometheus-nfs/values-nfs-client.yaml) to overwrite the default settings. You may download the example file and provide the NFS server IP-address and mountpath:
 ```
-# wget https://raw.githubusercontent.com/jromers/prometheus-nfs/master/values-nfs-client.yaml
+# wget https://raw.githubusercontent.com/jromers/k8s-ol-howto/master/prometheus-nfs/values-nfs-client.yaml
 # more values-nfs-client.yaml 
 replicaCount: 2
 
@@ -69,9 +69,9 @@ tbd
 ## Install Prometheus and Grafana
 
 Add Prometheus repo:
-'''
+```
 # helm repo add coreos https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/
-'''
+```
 
 Install Prometheus and Grafana, this prometheus operator does include the nice dashboard used by Grafana.
 ```
