@@ -1,0 +1,12 @@
+
+replicaCount: 2
+
+nfs:
+  server: XXX.XXX.XXX.XXX
+  path: /path/to/shared/dir
+  mountOptions:
+
+storageClass:
+  archiveOnDelete: false
+
+

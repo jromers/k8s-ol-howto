@@ -1,0 +1,20 @@
+
+grafana:
+  adminUser: "admin"
+  adminPassword: "admin"
+
+
+prometheus:
+
+  ## Prometheus StorageSpec for persistent data
+  ## Ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/storage.md
+  ##
+  storageSpec:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: nfs-client
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 8Gi
+      selector: {}
