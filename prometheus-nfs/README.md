@@ -1,11 +1,11 @@
 # How-to: Install Prometheus & Grafana with Helm and NFS store
 
-In this how-to guide I’ll describe the configuration steps to setup Prometheus and Grafana to monitor the Kubernetes cluster. This configuration can be used in Kubernetes demos or even in small proof of concept installations where you want to have a quick installation experience.
+In this how-to guide I’ll describe the configuration steps to setup Prometheus and Grafana on an Oracle Linux on-premise Kubernetes cluster. I use this configuration in Kubernetes demos, workshops or even in small proof of concept installations where you want to have a quick installation experience.
 
 I use the following software:
-* [Oracle Linux Vagrant Boxes to build VirtualBox VMs](https://github.com/oracle/vagrant-boxes) for a 3-node Kubernetes cluster
+* [Oracle Linux Vagrant Boxes](https://github.com/oracle/vagrant-boxes) to build 3-node Kubernetes cluster
 * [Helm](https://docs.helm.sh/) to install Kubernetes applications
-* [NFS Client Provisioner}(https://github.com/helm/charts/tree/master/stable/nfs-client-provisioner) using an external NFS server
+* [NFS Client Provisioner](https://github.com/helm/charts/tree/master/stable/nfs-client-provisioner) using an external NFS server
 * [Prometheus Operator](https://github.com/coreos/prometheus-operator) for Kubernetes
 
 ## Prerequisites
@@ -59,9 +59,18 @@ storageClass:
 ```
 Install the provisioner:
 ```
-# helm install --name externalnfs -f values-nfs-client.yaml stable/nfs-client-provisioner
+# helm install --name ext -f values-nfs-client.yaml stable/nfs-client-provisioner
+# kubectl k get pods
+NAME                                          READY     STATUS    RESTARTS   AGE
+ext-nfs-client-provisioner-769f9fcdd7-cpq4h   1/1       Running   0          1d
+ext-nfs-client-provisioner-769f9fcdd7-lpdhb   1/1       Running   0          1d
 ```
-
+For the sake of simplicity, I did not pay much attention to the NFS permissions. In real production environments you should set proper UID and GID mappings between containers and NFS share. In my NFS server (with /export/kubernetes/devtest)  I have the following directory permissions:
+```
+# ls -l /export/kubernetes/
+total 4
+drwxr-xr-x 4 nfsnobody nfsnobody 4096 Dec 18 22:17 devtest
+```
 ### Troubleshooting
 
 tbd
