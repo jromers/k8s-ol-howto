@@ -27,7 +27,7 @@ For other platforms check the [releases, download and install](https://github.co
 # cp linux-amd64/helm /usr/local/bin/helm
 ```
 
-Install Tiller on your cluster as the server part of Helm, including the required service-account:
+Install Tiller (this is the server part of Helm) on your cluster, it includes the required service-account:
 ```
 # kubectl -n kube-system create sa tiller
 # kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
@@ -43,7 +43,7 @@ First, on each Oracle Linux worker node, install the NFS packages:
 ```
 # yum install -y nfs-utils
 ```
-The Helm NFS Provisioner chart requires some configuration settings so that your Kubernetes server knows how to find your external NFS server and mountpath. For this I use a customized [values.yaml file](https://github.com/jromers/k8s-ol-howto/blob/master/prometheus-nfs/values-nfs-client.yaml) to overwrite the default settings. You may download the example file and provide the NFS server IP-address and mountpath:
+The [Helm NFS Provisioner chart](https://github.com/helm/charts/tree/master/stable/nfs-client-provisioner) requires some configuration settings so that your Kubernetes server knows how to find your external NFS server and mountpath. For this I use a customized [values.yaml](https://github.com/jromers/k8s-ol-howto/blob/master/prometheus-nfs/values-nfs-client.yaml) file to overwrite the default settings. 
 ```
 # wget https://raw.githubusercontent.com/jromers/k8s-ol-howto/master/prometheus-nfs/values-nfs-client.yaml
 # more values-nfs-client.yaml 
@@ -57,6 +57,8 @@ nfs:
 storageClass:
   archiveOnDelete: false
 ```
+Change the server and path settings in the values-nfs-client.yaml file to the NFS server and mountpath you use in your infrastructure.
+
 Install the provisioner:
 ```
 # helm install --name ext -f values-nfs-client.yaml stable/nfs-client-provisioner
@@ -65,7 +67,7 @@ NAME                                          READY     STATUS    RESTARTS   AGE
 ext-nfs-client-provisioner-769f9fcdd7-cpq4h   1/1       Running   0          1d
 ext-nfs-client-provisioner-769f9fcdd7-lpdhb   1/1       Running   0          1d
 ```
-For the sake of simplicity, I did not pay much attention to the NFS permissions. In real production environments you should set proper UID and GID mappings between containers and NFS share. In my NFS server (with /export/kubernetes/devtest)  I have the following directory permissions:
+For the sake of simplicity, I did not pay much attention to the NFS permissions. In real production environments you should set proper UID and GID mappings between containers and NFS share. On my NFS server (with /export/kubernetes/devtest)  I have the following directory permissions:
 ```
 # ls -l /export/kubernetes/
 total 4
@@ -88,7 +90,7 @@ Install Prometheus and Grafana, this prometheus operator does include the nice d
 # helm install coreos/kube-prometheus --name kube-prometheus --namespace monitoring --values values-nfs-prometheus.yaml
 ```
 
-By default the the Prometheus GUI and the Grafana GUI endpoints are exposed as ClusterIP and not reachable for outside access. To access the dashboard from outside the cluster change from  ClusterIP to NodePort.
+By default the Prometheus GUI and the Grafana GUI endpoints are exposed as ClusterIP and not reachable for outside access. To access the dashboard from outside the cluster change from  ClusterIP to NodePort.
 ```
 # kubectl edit svc kube-prometheus -n monitoring
   change "type: ClusterIP" to "type: NodePort"
