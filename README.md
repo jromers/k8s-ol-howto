@@ -16,5 +16,5 @@ Fore reference, I use the following software in the How-to guides:
 * [Use Vagrant and VirtualBox to setup Oracle Container Services for use with Kubernetes](https://community.oracle.com/docs/DOC-1022800)
 * [Oracle VM VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 * [Vagrant](https://www.vagrantup.com/)
-
+* [Useful tips for getting ready for the cloud](https://cloudinfrastructuresoftware.blogspot.com/)
 
