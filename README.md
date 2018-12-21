@@ -6,7 +6,7 @@ This will be a growing list with How-to guides organized in sub-projects, for no
 * [Install Ingress and Load balancer for on-premise Oracle Linux and Kubernetes](https://github.com/jromers/k8s-ol-howto/tree/master/ingress_loadbalancer)
 * [Install Prometheus & Grafana with Helm and NFS store for on-premise Oracle Linux and Kubernetes](https://github.com/jromers/k8s-ol-howto/tree/master/prometheus-nfs)
 
-The How-to guides are simple to use and designed to run on a laptop. This is a very conveniant setup and a nice way to explore or develop cloud native applications without spending cloud resources. Another advantage for this setup is that you build an infrastructure on your laptop that is similar to your production environment including clustered nodes.
+The How-to guides are simple to use and designed to run on a laptop. This is a very convenient setup and a nice way to explore or develop cloud native applications without spending cloud resources. Another advantage for this setup is that you build an infrastructure on your laptop that is similar to your production environment including clustered nodes.
 
 You can use any developer platform (Windows, MacOS or Linux). But do not hesitate to use this How-to on any virtualization platform (Oracle Linux VMs based on KVM or VMware) or on bare-metal Oracle Linux servers in your datacenter network.
 

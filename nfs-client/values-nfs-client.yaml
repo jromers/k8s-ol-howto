@@ -2,8 +2,8 @@
 replicaCount: 2
 
 nfs:
-  server: XXX.XXX.XXX.XXX
-  path: /path/to/shared/dir
+  server: 10.10.10.10
+  path: /export/kubernetes/devtest
   mountOptions:
 
 storageClass:
