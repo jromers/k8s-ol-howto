@@ -10,7 +10,14 @@ I use this configuration in Kubernetes demos, workshops or even in small proof o
 
 ## Prerequisites
 
-I run this deployment on a laptop using Vagrant and VirtualBox. I follow the standard installation as published on the Oracle Community website: [Use Vagrant and VirtualBox to setup Oracle Container Services for use with Kubernetes](https://community.oracle.com/docs/DOC-1022800). 
+I run this deployment on a laptop using Vagrant and VirtualBox. I follow the standard installation as published on the Oracle Community website: [Use Vagrant and VirtualBox to setup Oracle Container Services for use with Kubernetes](https://community.oracle.com/docs/DOC-1022800). Here's my Kubernetes cluster:
+```
+# kubectl get nodes
+NAME                 STATUS    ROLES     AGE       VERSION
+master.vagrant.vm    Ready     master    6m        v1.9.11+2.1.1.el7
+worker1.vagrant.vm   Ready     <none>    3m        v1.9.11+2.1.1.el7
+worker2.vagrant.vm   Ready     <none>    43s       v1.9.11+2.1.1.el7
+```
 
 You must have an already configured NFS server in your network and you should know the IP_address of the server and the exported mountpath for the NFS share. In this How-to guide I use:
 ```
@@ -21,13 +28,13 @@ If you do not have an external NFS server, try to [setup NFS services](https://d
 
 ## Install Helm
 
-Helm is a tool for managing Kubernetes charts. Charts are packages of pre-configured Kubernetes resources. In this How-to guide I use the [Helm Charts](https://github.com/helm/charts/tree/master/stable) for the NFS Client Provisioner.
+Helm is a tool for managing Kubernetes charts. Charts are packages of pre-configured Kubernetes resources. In this How-to guide I use the [Helm Charts](https://github.com/helm/charts/tree/master/stable) for the NFS Client Provisioner and the Prometheus Operator.
 
 Install Helm on MacOSX with the [Homebrew](https://brew.sh/) package manager:
 ```
 # brew install kubernetes-helm
 ```
-For other platforms check the [releases, download and install](https://github.com/helm/helm/releases) (see below for Linux):
+For other platforms check the [releases, download and install](https://github.com/helm/helm/releases) the Helm binary (see below for Linux):
 ```
 # wget https://storage.googleapis.com/kubernetes-helm/helm-v2.12.0-linux-amd64.tar.gz
 # tar xvfx helm-v2.12.0-linux-amd64.tar.gz
@@ -44,7 +51,7 @@ Install Tiller (this is the server part of Helm) on your cluster, it includes th
 
 ## Install NFS Client Provisioner
 
-The NFS Client Provisioner is a Kubernetes application to dynamically create persistent volumes for your applications. The NFS share is provided by an already configured NFS server outside your Kubernetes deployment.
+The NFS Client Provisioner is a Kubernetes application to dynamically create persistent volumes for your applications. The NFS share is provided by an already existing NFS server outside your Kubernetes deployment.
 
 First, on each Oracle Linux worker node, install the NFS packages:
 ```
@@ -52,7 +59,7 @@ First, on each Oracle Linux worker node, install the NFS packages:
 ```
 The [Helm NFS Provisioner chart](https://github.com/helm/charts/tree/master/stable/nfs-client-provisioner) requires some configuration settings so that your Kubernetes server knows how to find your external NFS server and mountpath. For this I use a customized yaml file to overwrite the default settings. 
 ```
-# wget https://raw.githubusercontent.com/jromers/k8s-ol-howto/master/prometheus-nfs/values-nfs-client.yaml
+# wget https://raw.githubusercontent.com/jromers/k8s-ol-howto/master/nfs-client/values-nfs-client.yaml
 # more values-nfs-client.yaml 
 replicaCount: 2
 
@@ -64,23 +71,28 @@ nfs:
 storageClass:
   archiveOnDelete: false
 ```
-Change the **server** and **path** settings in the values-nfs-client.yaml file to the NFS server and mountpath you use in your infrastructure. This configuration uses two Replicas and when an applications is deleted with Helm it also removes the files from the NFS store in stead of the default archiver option.
+Change the **server** and **path** settings in the values-nfs-client.yaml file to the NFS server and mountpath you use in your infrastructure. This configuration uses two Replicas and when an applications is deleted with Helm it also removes the files from the NFS store. If you want to keep the data after the application is removed set archiveOnDelete to true.
 
 Install the provisioner:
 ```
 # helm install --name ext -f values-nfs-client.yaml stable/nfs-client-provisioner
-# kubectl k get pods
+# kubectl get storageclass
+NAME         PROVISIONER                                AGE
+nfs-client   cluster.local/ext-nfs-client-provisioner   3m
+# kubectl get pods
 NAME                                          READY     STATUS    RESTARTS   AGE
-ext-nfs-client-provisioner-769f9fcdd7-cpq4h   1/1       Running   0          1d
-ext-nfs-client-provisioner-769f9fcdd7-lpdhb   1/1       Running   0          1d
+ext-nfs-client-provisioner-6fcf996c79-5svck   1/1       Running   0          4m
+ext-nfs-client-provisioner-6fcf996c79-wcp57   1/1       Running   0          4m
 ```
-For the sake of simplicity, I did not pay much attention to the NFS permissions. In real production environments you should set proper UID and GID mappings between containers and NFS share. On my NFS server (with /export/kubernetes/devtest)  I have the following directory permissions:
+For the sake of simplicity, I did not pay much attention to the NFS permissions.
+In real production environments you should set proper UID and GID mappings between containers and NFS share. 
+
+On my NFS server (with /export/kubernetes/devtest) I have the following directory permissions:
 ```
 # ls -l /export/kubernetes/
 total 4
 drwxr-xr-x 4 nfsnobody nfsnobody 4096 Dec 18 22:17 devtest
 ```
-### NFS Client Provisioner Troubleshooting
 
-tbd
+### NFS Client Provisioner Troubleshooting
 
