@@ -1,10 +1,6 @@
 # How-to: Install NFS Client Provisioner and use NFS as persistent storage for on-premise Oracle Linux and Kubernetes deployments
 
-In this How-to guide I’ll describe the configuration steps to setup the NFS Client Provisioner on an Oracle Linux on-premise Kubernetes cluster. The provisioner automatically creates persistent volumes in Kubernetes for an external, already configured NFS server.  The following software packages are used in this deployment:
-
-* [Oracle Linux Vagrant Boxes](https://github.com/oracle/vagrant-boxes) to build 3-node Kubernetes cluster
-* [Helm](https://docs.helm.sh/) to install Kubernetes applications
-* [NFS Client Provisioner](https://github.com/helm/charts/tree/master/stable/nfs-client-provisioner) using an external NFS server
+In this How-to guide I’ll describe the configuration steps to setup the NFS Client Provisioner on an Oracle Linux on-premise Kubernetes cluster. The provisioner automatically creates persistent volumes in Kubernetes for an external, already configured NFS server.
 
 I use this configuration in Kubernetes demos, workshops or even in small proof of concept installations where you want to have a quick installation experience. But do not hesitate to use this How-to guide for bare-metal or other virtual deployments.
 
