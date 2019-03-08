@@ -13,41 +13,18 @@ I use this configuration in Kubernetes demos, workshops or even in small proof o
 I run this deployment on a laptop using Vagrant and VirtualBox. I follow the standard installation as published on the Oracle Community website: [Use Vagrant and VirtualBox to setup Oracle Container Services for use with Kubernetes](https://community.oracle.com/docs/DOC-1022800). Here's my Kubernetes cluster:
 ```
 # kubectl get nodes
-NAME                 STATUS    ROLES     AGE       VERSION
-master.vagrant.vm    Ready     master    6m        v1.9.11+2.1.1.el7
-worker1.vagrant.vm   Ready     <none>    3m        v1.9.11+2.1.1.el7
-worker2.vagrant.vm   Ready     <none>    43s       v1.9.11+2.1.1.el7
+NAME                 STATUS   ROLES    AGE   VERSION
+master.vagrant.vm    Ready    master   43h   v1.12.5+2.1.1.el7
+worker1.vagrant.vm   Ready    <none>   42h   v1.12.5+2.1.1.el7
+worker2.vagrant.vm   Ready    <none>   42h   v1.12.5+2.1.1.el7
 ```
 
-You must have an already configured NFS server in your network and you should know the IP_address of the server and the exported mountpath for the NFS share. In this How-to guide I use:
+You must have an already configured NFS server in your network and you should know the IP_address of the server and the exported mountpath for the NFS share. If you do not have an external NFS server, try to [setup NFS services](https://docs.oracle.com/cd/E52668_01/E54669/html/ol7-cfgsvr-nfs.html) on your Kubernetes master node that we use for this demo (for test and demo purposes only). In this How-to guide I use:
 ```
-Server: 	10.10.10.10
+Server: 	192.168.99.100
 Mountpath: 	/export/kubernetes/devtest
 ```
-If you do not have an external NFS server, try to [setup NFS services](https://docs.oracle.com/cd/E52668_01/E54669/html/ol7-cfgsvr-nfs.html) on your Kubernetes master node in this little 3-node cluster (for test and demo purposes only).
-
-## Install Helm
-
-Helm is a tool for managing Kubernetes charts. Charts are packages of pre-configured Kubernetes resources. In this How-to guide I use the [Helm Charts](https://github.com/helm/charts/tree/master/stable) for the NFS Client Provisioner and the Prometheus Operator.
-
-Install Helm on MacOSX with the [Homebrew](https://brew.sh/) package manager:
-```
-# brew install kubernetes-helm
-```
-For other platforms check the [releases, download and install](https://github.com/helm/helm/releases) the Helm binary (see below for Linux):
-```
-# wget https://storage.googleapis.com/kubernetes-helm/helm-v2.12.0-linux-amd64.tar.gz
-# tar xvfx helm-v2.12.0-linux-amd64.tar.gz
-# cp linux-amd64/helm /usr/local/bin/helm
-```
-
-Install Tiller (this is the server part of Helm) on your cluster, it includes the required service-account:
-```
-# kubectl -n kube-system create sa tiller
-# kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
-# helm init --service-account tiller
-```
-
+In this Howto-guide we use the Kubernetes Helm package-manager, please make sure to follow Oracle Linux Helm installation steps as described in this [Helm Howto-guide](https://github.com/jromers/k8s-ol-howto/tree/master/helm).
 
 ## Install NFS Client Provisioner
 
@@ -64,7 +41,7 @@ The [Helm NFS Provisioner chart](https://github.com/helm/charts/tree/master/stab
 replicaCount: 2
 
 nfs:
-  server: 10.10.10.10
+  server: 192.168.99.100
   path: /export/kubernetes/devtest
   mountOptions:
 
@@ -94,5 +71,4 @@ total 4
 drwxr-xr-x 4 nfsnobody nfsnobody 4096 Dec 18 22:17 devtest
 ```
 
-### NFS Client Provisioner Troubleshooting
 

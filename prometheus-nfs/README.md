@@ -13,35 +13,15 @@ I use this configuration in Kubernetes demos, workshops or even in small proof o
 I run this deployment on a laptop using Vagrant and VirtualBox. I follow the standard installation as published on the Oracle Community website: [Use Vagrant and VirtualBox to setup Oracle Container Services for use with Kubernetes](https://community.oracle.com/docs/DOC-1022800). Here's my Kubernetes cluster:
 ```
 # kubectl get nodes
-NAME                 STATUS    ROLES     AGE       VERSION
-master.vagrant.vm    Ready     master    6m        v1.9.11+2.1.1.el7
-worker1.vagrant.vm   Ready     <none>    3m        v1.9.11+2.1.1.el7
-worker2.vagrant.vm   Ready     <none>    43s       v1.9.11+2.1.1.el7
+NAME                 STATUS   ROLES    AGE   VERSION
+master.vagrant.vm    Ready    master   43h   v1.12.5+2.1.1.el7
+worker1.vagrant.vm   Ready    <none>   43h   v1.12.5+2.1.1.el7
+worker2.vagrant.vm   Ready    <none>   43h   v1.12.5+2.1.1.el7
 ```
 
 The Prometheus Operator uses by default non-persistent storage which means that when the pod restarts, the historical monitoring data is lost. This is OK for a quick demo, but for a workshop, PoC or production deployment you like to have persistent volumes. In this guide I use an example with a NFS share based on the configuration that is explained in my [NFS Client Provisioner How-to guide](https://github.com/jromers/k8s-ol-howto/tree/master/nfs-client).
 
-## Install Helm
-
-Helm is a tool for managing Kubernetes charts. Charts are packages of pre-configured Kubernetes resources. In this How-to guide I use the [Helm Charts](https://github.com/helm/charts/tree/master/stable) for the NFS Client Provisioner and the Prometheus Operator.
-
-Install Helm on MacOSX with the [Homebrew](https://brew.sh/) package manager:
-```
-# brew install kubernetes-helm
-```
-For other platforms check the [releases, download and install](https://github.com/helm/helm/releases) the Helm binary (see below for Linux):
-```
-# wget https://storage.googleapis.com/kubernetes-helm/helm-v2.12.0-linux-amd64.tar.gz
-# tar xvfx helm-v2.12.0-linux-amd64.tar.gz
-# cp linux-amd64/helm /usr/local/bin/helm
-```
-
-Install Tiller (this is the server part of Helm) on your cluster, it includes the required service-account:
-```
-# kubectl -n kube-system create sa tiller
-# kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
-# helm init --service-account tiller
-```
+In this Howto-guide we use the Kubernetes Helm package-manager, please make sure to follow Oracle Linux Helm installation steps as described in this [Helm Howto-guide](https://github.com/jromers/k8s-ol-howto/tree/master/helm).
 
 ## Install Prometheus and Grafana
 
@@ -58,8 +38,11 @@ The Helm chart installs out-of-the-box, but I use a yaml file with customized se
 # vi values-prometheus.yaml
   change default password
 # helm install --namespace monitoring --name prometheus-operator coreos/prometheus-operator
-# helm install coreos/kube-prometheus --name kube-prometheus --namespace monitoring --values values-prometheus.yaml
+# helm install coreos/kube-prometheus --name kube-prometheus --namespace monitoring \
+    --set deployKubeDNS=false --set deployCoreDNS=true \
+    --values values-prometheus.yaml
 ```
+Since [version 1.1.12 of Oracle Container Services for use with Kubernetes](https://blogs.oracle.com/linux/announcing-oracle-container-services-1112-for-use-with-kubernetes) CoreDNS is the default cluster DNS service, in the configuration of prometheus we need to change from the default KubeDNS to CoreDNS as monitoring target.
 
 For the persistent storage volumes with the NFS Client Provisioner I use a yaml file with customized settings. Like before, change the admin password. By default the StorageClass is *nfs-client* (if you use the NFS Client Provisioner) but for your deployment this may be different. Also the amount of claimed space is something you might want to change (8Gi in my deployment):
 ```
@@ -67,7 +50,9 @@ For the persistent storage volumes with the NFS Client Provisioner I use a yaml 
 # vi values-nfs-prometheus.yaml
   change default password
 # helm install --namespace monitoring --name prometheus-operator coreos/prometheus-operator
-# helm install coreos/kube-prometheus --name kube-prometheus --namespace monitoring --values values-nfs-prometheus.yaml
+# helm install coreos/kube-prometheus --name kube-prometheus --namespace monitoring \
+    --set deployKubeDNS=false --set deployCoreDNS=true \
+    --values values-nfs-prometheus.yaml
 ```
 
 The Prometheus GUI and the Grafana GUI endpoints are exposed as ClusterIP and not reachable for outside access. To access the dashboard from outside the cluster change from  ClusterIP to NodePort.

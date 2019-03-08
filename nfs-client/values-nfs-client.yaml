@@ -2,7 +2,7 @@
 replicaCount: 2
 
 nfs:
-  server: 10.10.10.10
+  server: 192.168.99.100
   path: /export/kubernetes/devtest
   mountOptions:
 
